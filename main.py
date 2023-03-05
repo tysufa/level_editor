@@ -27,7 +27,11 @@ class LevelEditor:
         with open("saves/level1", "w+") as file:
             for rect in self.liste_rect_detaille:
                 for el in rect:
-                    file.write(str(el) + "\n") # on ajoute individuellement chaque élément de la liste des rectangles dans le fichier
+                    if type(el) != bool and el != pygame.Rect: # si l'élément est un rectangle avec des coordonnées :
+                        rect_tempo = pygame.Rect(el.x - self.pos_background[0], el.y - self.pos_background[1], el.width, el.height) # on créer un rectangle avec la même taille mais une position adaptée à l'origine du fond d'écran
+                        file.write(str(rect_tempo) + "\n") # on ajoute ce rectangle au fichier de sauvegarde
+                    else:
+                        file.write(str(el) + "\n") # on ajoute individuellement chaque élément de la liste des rectangles dans le fichier
             file.write(str(self.hitbox_player) + "\n")
             if self.is_background:
                 file.write(str(self.pos_background))

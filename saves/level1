@@ -1,20 +1,53 @@
 True
 False
-<rect(209, 335, 119, 48)>
+<rect(245, 207, 137, 28)>
 True
 False
-<rect(236, 205, 136, 51)>
+<rect(0, 350, 62, 44)>
 True
 False
-<rect(533, 260, 31, 37)>
+<rect(5, 392, 237, 65)>
 True
 False
-<rect(396, 247, 35, 33)>
+<rect(220, 335, 118, 68)>
 True
 False
-<rect(209, 149, 4, 5)>
+<rect(324, 374, 570, 46)>
+True
+False
+<rect(873, 335, 295, 49)>
+True
+False
+<rect(964, 177, 202, 101)>
+True
+False
+<rect(881, 149, 88, 32)>
+True
+False
+<rect(704, 204, 134, 47)>
+True
+False
+<rect(451, 307, 62, 19)>
+True
+False
+<rect(542, 261, 32, 36)>
+True
+False
+<rect(405, 247, 33, 32)>
+True
+False
+<rect(5, 147, 173, 50)>
+True
+False
+<rect(154, 195, 24, 31)>
+True
+False
+<rect(216, 108, 21, 47)>
+True
+False
+<rect(458, 109, 26, 48)>
 False
 True
 <class 'pygame.Rect'>
-<rect(92, 100, 10, 40)>
-[-8, 0]
+<rect(148, 180, 10, 40)>
+[48, 80]
