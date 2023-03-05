@@ -4,7 +4,7 @@ pygame.init()
 
 
 class LevelEditor:
-    def __init__(self, size_w, size_h, background):
+    def __init__(self, size_w, size_h, background=""):
         self.size_h = size_h
         self.size_w = size_w
         self.liste_rect_detaille = [
@@ -14,9 +14,61 @@ class LevelEditor:
         self.hitbox_player = pygame.Rect((100, 100), (10, 40))
         self.gravity = False
         self.y_velocity = 0
-        self.background_img = pygame.image.load(background)
+        if background != "": # on traite le cas ou on ne veut pas d'image en fond
+            self.background_img = pygame.image.load(background)
+            self.is_background = True
+        else:
+            self.is_background = False
+
         self.pos_background = [0, 0]
         self.velocity = 4
+
+    def level_save(self):
+        with open("saves/level1", "w+") as file:
+            for rect in self.liste_rect_detaille:
+                for el in rect:
+                    file.write(str(el) + "\n") # on ajoute individuellement chaque élément de la liste des rectangles dans le fichier
+            file.write(str(self.hitbox_player) + "\n")
+            if self.is_background:
+                file.write(str(self.pos_background))
+
+    def load_level(self):
+        liste_rect_str = []
+        bool_liste_rect = True
+        with open("saves/level1", "r") as file:
+            infos = file.readlines()
+            for i in range(len(infos)): # on parcours chaque donnée une par une :
+                if bool_liste_rect: # si on est en train de regarder les infos de la liste de rectangles :
+                    if i % 3 == 0: # permet de savoir s'il faut passer au rectangle suivant
+                        liste_rect_str.append([]) # on ajoute une liste vide pour le prochain rectangle
+                    liste_rect_str[-1].append(infos[i]) # on ajoute l'info actuelle au dernier rectangle de la liste
+
+                if infos[i] == "<class 'pygame.Rect'>\n": # si on arrive à cet élément, on est à la fin de la liste de rectangle
+                    bool_liste_rect = False
+
+        for liste in liste_rect_str: # on remplace les "True" et "False" par des vrais booléens
+            for i in range(len(liste)):
+                if "True" in liste[i]:
+                    liste[i] = True
+                elif "False" in liste[i]:
+                    liste[i] = False
+                elif liste[i] == "<class 'pygame.Rect'>\n": # on transforme le string en rectangle non déclaré
+                    liste[i] = pygame.Rect
+                else:
+                    str_coo = "" # on stock une chaine de caractère contenant uniquement les coordonées
+                    bool_coo = False # un booléen pour savoir si l'on est en train de rentrer des coordonnées
+                    for ch in liste[i]:
+                        if ch == ")": # on teste si on sort des coordonnées
+                            bool_coo = False
+                        if bool_coo: # si on est dedans on peut ajouter le caractère actuel
+                            str_coo += ch
+                        if ch == "(": # on teste si on entre dans les coordonnées
+                            bool_coo = True
+
+                    liste[i] = str_coo.split(", ") # on créer une liste qui ne contient que la position et la taille du rectangle sous forme de strings
+                    liste[i] = pygame.Rect(int(liste[i][0]), int(liste[i][1]), int(liste[i][2]), int(liste[i][3])) # puis on créer un vrai rectangle à partir des infos extraites
+
+        self.liste_rect_detaille = liste_rect_str # on transforme la liste actuelle de rectangles en la liste que l'on a chargé
 
     def player_collision(self):
         if len(self.liste_rect_detaille) > 1:
@@ -40,7 +92,8 @@ class LevelEditor:
 
     def affichage(self):
         self.window.fill("black")
-        self.window.blit(self.background_img, self.pos_background)
+        if self.is_background:
+            self.window.blit(self.background_img, self.pos_background)
 
         for i in range(len(self.liste_rect_detaille)):  # on parcours la liste des rectangles
             if self.liste_rect_detaille[i][0]:  # si il doit être affiché :
@@ -135,8 +188,12 @@ class LevelEditor:
                 if event.type == pygame.KEYDOWN:
                     if pygame.key.get_pressed()[pygame.K_LCTRL] and pygame.key.get_pressed()[pygame.K_z]:
                         self.ctrl_z()
+                    if pygame.key.get_pressed()[pygame.K_LCTRL] and pygame.key.get_pressed()[pygame.K_s]:
+                        self.level_save()
                     if pygame.key.get_pressed()[pygame.K_SPACE]:
                         self.gravity = not self.gravity
+                    if pygame.key.get_pressed()[pygame.K_o]: #touche pour charger un niveau
+                        self.load_level()
 
             self.deplacement_niveau()
 
